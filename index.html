@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: black;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ball {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            animation: move 5s infinite ease-in-out;
+        }
+
+        .ball:nth-child(1) { top: 10%; left: 20%; width: 12px; height: 12px; animation-duration: 7s; }
+        .ball:nth-child(2) { top: 30%; left: 50%; width: 8px; height: 8px; animation-duration: 6s; }
+        .ball:nth-child(3) { top: 70%; left: 10%; width: 15px; height: 15px; animation-duration: 8s; }
+        .ball:nth-child(4) { top: 50%; left: 80%; width: 10px; height: 10px; animation-duration: 9s; }
+        .ball:nth-child(5) { top: 90%; left: 30%; width: 6px; height: 6px; animation-duration: 5s; }
+        .ball:nth-child(6) { top: 20%; left: 70%; width: 14px; height: 14px; animation-duration: 10s; }
+        .ball:nth-child(7) { top: 60%; left: 40%; width: 8px; height: 8px; animation-duration: 6s; }
+        .ball:nth-child(8) { top: 80%; left: 60%; width: 10px; height: 10px; animation-duration: 7s; }
+        .ball:nth-child(9) { top: 40%; left: 10%; width: 12px; height: 12px; animation-duration: 8s; }
+        .ball:nth-child(10) { top: 10%; left: 90%; width: 8px; height: 8px; animation-duration: 9s; }
+
+        @keyframes move {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0.8;
+            }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(10px); 
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            width: 400px;
+            position: relative;
+            z-index: 10;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 26px;
+            font-weight: 600;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            margin-bottom: 15px;
+            transition: border-color 0.3s ease, transform 0.3s ease;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #25d366;
+            transform: scale(1.02);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #25d366;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #1ebc59;
+            transform: scale(1.02);
+        }
+
+        #resetBtn {
+            background: #ff4d4d;
+        }
+
+        #resetBtn:hover {
+            background: #e63939;
+        }
+
+        #qrcode {
+            margin: 30px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9); 
+            display: inline-block;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        #qrcode.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #downloadBtn {
+            display: none;
+            background: #007bff;
+        }
+
+        #downloadBtn:hover {
+            background: #0056b3;
+        }
+
+        .loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #25d366;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="ball"></div>
+    <div class="ball"></div>
+    <div class="ball"></div>
+    <div class="ball"></div>
+    <div class="ball"></div>
+    <div class="ball"></div>
+    <div class="ball"></div>
+    <div class="ball"></div>
+    <div class="ball"></div>
+    <div class="ball"></div>
+
+    <div class="container">
+        <h2>QR Code Generator</h2>
+
+        <input type="text" id="inputData" placeholder="Masukkan Nomer Wa atau link WebsiteMu">
+        <textarea id="messageInput" placeholder="Pesan default untuk wa (opsional)"></textarea>
+        <div id="errorMessage" class="error"></div>
+        <button onclick="startGeneration()">Generate QR Code</button>
+        <button id="resetBtn" onclick="resetForm()">Reset</button>
+
+        <div id="qrcode"></div>
+        <button id="downloadBtn" onclick="downloadQR()">Download QR Code</button>
+
+        <div id="loader" class="loader"></div>
+    </div>
+
+    <script>
+        function startGeneration() {
+            var inputData = document.getElementById("inputData").value.trim();
+            var message = document.getElementById("messageInput").value.trim();
+            var errorMessage = document.getElementById("errorMessage");
+            var loader = document.getElementById("loader");
+
+            errorMessage.textContent = "";
+            document.getElementById("downloadBtn").style.display = "none";
+            document.getElementById("qrcode").innerHTML = "";
+            document.getElementById("qrcode").classList.remove("show");
+
+            if (inputData === "") {
+                errorMessage.textContent = "Masukkan nomor atau link WhatsApp!";
+                return;
+            }
+
+            if (!inputData.startsWith("http") && inputData.replace(/\D/g, '').length < 9) {
+                errorMessage.textContent = "Nomor WhatsApp tidak valid!";
+                return;
+            }
+
+            loader.style.display = "block";
+
+            setTimeout(() => {
+                generateQRCode(inputData, message);
+                loader.style.display = "none";
+            }, 2000);
+        }
+
+        function generateQRCode(inputData, message) {
+            var linkWA;
+            if (inputData.startsWith("http")) {
+                linkWA = inputData; 
+            } else {
+                linkWA = "https://wa.me/" + inputData.replace(/\D/g, ''); 
+            }
+
+            if (message !== "") {
+                linkWA += "?text=" + encodeURIComponent(message);
+            }
+
+            new QRCode(document.getElementById("qrcode"), {
+                text: linkWA,
+                width: 200,
+                height: 200
+            });
+
+            document.getElementById("qrcode").classList.add("show");
+
+            document.getElementById("downloadBtn").style.display = "block";
+        }
+
+        function downloadQR() {
+            var qrCanvas = document.querySelector("#qrcode canvas");
+            var link = document.createElement("a");
+            link.href = qrCanvas.toDataURL("image/png");
+            link.download = "whatsapp_qrcode.png";
+            link.click();
+        }
+
+        function resetForm() {
+            document.getElementById("inputData").value = "";
+            document.getElementById("messageInput").value = "";
+            document.getElementById("errorMessage").textContent = "";
+            document.getElementById("qrcode").innerHTML = "";
+            document.getElementById("qrcode").classList.remove("show");
+            document.getElementById("downloadBtn").style.display = "none";
+        }
+    </script>
+</body>
+</html>
